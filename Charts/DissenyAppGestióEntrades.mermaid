@@ -1,0 +1,64 @@
+classDiagram
+
+class Usuari {
+  <<abstract>>
+  nom : String
+  email : String
+  contrasenya : String
+  registrar()
+  iniciarSessio()
+  tancarSessio()
+}
+
+class Client {
+  historialEntrades : List<Entrada>
+  cercarEsdeveniment()
+  comprarEntrada()
+  veureEntradesComprades()
+}
+
+class Administrador {
+  esdevenimentsGestionats : List<Esdeveniment>
+  crearEsdeveniment()
+  modificarEsdeveniment()
+  eliminarEsdeveniment()
+}
+
+class Esdeveniment {
+  id : int
+  nom : String
+  descripcio : String
+  data : Date
+  ubicacio : String
+  entradesDisponibles : int
+  afegirEntrada()
+  eliminarEntrada()
+  actualitzarDisponibilitat()
+}
+
+class Entrada {
+  id : int
+  preu : double
+  estat : String
+  marcarComVenuda()
+  marcarComDisponible()
+}
+
+class Pagament {
+  id : int
+  import : double
+  metode : String
+  estat : String
+  processarPagament()
+  confirmarPagament()
+  cancel·larPagament()
+}
+
+Usuari <|-- Client
+Usuari <|-- Administrador
+
+Administrador "1" --> "0..*" Esdeveniment : gestiona
+Esdeveniment "1" *-- "1..*" Entrada
+Client "1" --> "0..*" Entrada : compra
+Client "1" --> "0..*" Pagament
+Pagament "1" --> "1..*" Entrada

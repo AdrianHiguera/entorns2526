@@ -1,0 +1,22 @@
+classDiagram
+class Artista {
+  id: int
+  nom: str
+}
+
+class Album {
+  id: int
+  titol: str
+  data_llancament: date
+}
+
+class Cancio {
+  id: int
+  titol: str
+  durada: float
+}
+
+Artista "1" --> "0..*" Album : crea
+Album "1" --> "0..*" Cancio : conté
+Album "1" --> "1" Artista : pertany
+Cancio "1" --> "1" Album : pertany

@@ -2,63 +2,70 @@ classDiagram
 
 class Usuari {
   <<abstract>>
-  nom : String
-  email : String
-  contrasenya : String
+  int idUsuari
+  String nom
+  String email
+  String contrasenya
+  String tipusUsuari
   registrar()
   iniciarSessio()
   tancarSessio()
 }
 
 class Client {
-  historialEntrades : List<Entrada>
+  List~Entrada~ historialCompres
   cercarEsdeveniment()
   comprarEntrada()
-  veureEntradesComprades()
+  veureEntrades()
 }
 
 class Administrador {
-  esdevenimentsGestionats : List<Esdeveniment>
+  int nivellPermisos
   crearEsdeveniment()
   modificarEsdeveniment()
   eliminarEsdeveniment()
 }
 
 class Esdeveniment {
-  id : int
-  nom : String
-  descripcio : String
-  data : Date
-  ubicacio : String
-  entradesDisponibles : int
-  afegirEntrada()
-  eliminarEntrada()
-  actualitzarDisponibilitat()
+  int idEsdeveniment
+  String nom
+  String descripcio
+  Date data
+  String ubicacio
+  int entradesDisponibles
+  publicar()
+  actualitzarInformacio()
+  cancelar()
 }
 
 class Entrada {
-  id : int
-  preu : double
-  estat : String
-  marcarComVenuda()
-  marcarComDisponible()
+  int idEntrada
+  double preu
+  EstatEntrada estat
+  reservar()
+  vendre()
+  cancelarVenda()
 }
 
 class Pagament {
-  id : int
-  import : double
-  metode : String
-  estat : String
+  int idPagament
+  double import
+  String metodePagament
+  Date dataPagament
   processarPagament()
-  confirmarPagament()
-  cancel·larPagament()
+  validarPagament()
+  retornarPagament()
+}
+
+class EstatEntrada {
+  <<enumeration>>
+  Disponible
+  Venuda
 }
 
 Usuari <|-- Client
 Usuari <|-- Administrador
-
 Administrador "1" --> "0..*" Esdeveniment : gestiona
-Esdeveniment "1" *-- "1..*" Entrada
+Esdeveniment "1" --> "1..*" Entrada : te
 Client "1" --> "0..*" Entrada : compra
-Client "1" --> "0..*" Pagament
-Pagament "1" --> "1..*" Entrada
+Entrada "1" --> "1" Pagament : genera

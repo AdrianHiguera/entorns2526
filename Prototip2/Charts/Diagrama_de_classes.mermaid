@@ -1,0 +1,66 @@
+classDiagram
+
+%% =====================
+%% WEBSERVICE / CONTROLLER
+%% =====================
+class WebService {
+    +login(username: String, password: String)
+    +loginToken(token: String)
+    +getChild(idUser: int)
+}
+
+%% ======
+%% DAOs
+%% ======
+class UserDAO {
+    +getUserLogin(username: String, password: String)
+    +getUserByToken(token: String)
+}
+
+class ChildDAO {
+    +getChildByUser(idUser: int)
+}
+
+class TapDAO {
+    +getTapByChild(idChild: int)
+}
+
+%% =================
+%% ADT (DATA CLASSES)
+%% =================
+class User {
+    id: int
+    username: String
+    email: String
+    password: String
+    token: String
+    idrole: int
+}
+
+class Child {
+    id: int
+    child_name: String
+    sleep_average: int
+    treatment_id: int
+    time: int
+}
+
+class Tap {
+    id: int
+    tap_date: Date
+    tap_time: int
+}
+
+%% =================
+%% RELACIONS
+%% =================
+WebService --> UserDAO
+WebService --> ChildDAO
+WebService --> TapDAO
+
+UserDAO --> User
+ChildDAO --> Child
+TapDAO --> Tap
+
+User "1" --> "0..*" Child
+Child "1" --> "0..*" Tap

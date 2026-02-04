@@ -1,0 +1,26 @@
+flowchart LR
+    %% Nodo Client
+    Client[Client Web / Mobile App]
+
+    %% Nodo Server completo
+    subgraph Server[Server Prototip 2]
+        WS[WebService / Controllers\nEndpoints: /login, /child, etc.]
+        DAO[DAO Layer\nUserDAO, ChildDAO, TapDAO]
+        ADT[ADT / Models\nUser, Child, Tap, Role, Status, Treatment]
+    end
+
+    %% Base de datos
+    DB[(Database)]
+
+    %% Conexiones
+    Client -->|HTTP REST JSON| WS
+    WS -->|Calls CRUD methods| DAO
+    DAO -->|Uses| ADT
+    DAO -->|CRUD| DB
+    WS -->|JSON Response + Token| Client
+
+    %% Detalles CRUD
+    subgraph CRUD_Details[CRUD / Funciones]
+        WS -->|Create / Read / Update / Delete| DAO
+        DAO -->|Select / Insert / Update / Delete| DB
+    end

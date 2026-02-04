@@ -1,66 +1,84 @@
 classDiagram
 
-%% =====================
-%% WEBSERVICE / CONTROLLER
-%% =====================
-class WebService {
-    +login(username: String, password: String)
-    +loginToken(token: String)
-    +getChild(idUser: int)
-}
-
-%% ======
-%% DAOs
-%% ======
-class UserDAO {
-    +getUserLogin(username: String, password: String)
-    +getUserByToken(token: String)
-}
-
-class ChildDAO {
-    +getChildByUser(idUser: int)
-}
-
-class TapDAO {
-    +getTapByChild(idChild: int)
-}
-
-%% =================
-%% ADT (DATA CLASSES)
-%% =================
+%% Clases principales
 class User {
-    id: int
-    username: String
-    email: String
-    password: String
-    token: String
-    idrole: int
+    +int id
+    +string username
+    +string password
+    +string email
+    +int idrole
+    +login()
+    +login_token()
 }
 
 class Child {
-    id: int
-    child_name: String
-    sleep_average: int
-    treatment_id: int
-    time: int
+    +int id
+    +string child_name
+    +int sleep_average
+    +int treatment_id
+    +int time
+    +get_children_by_user()
 }
 
 class Tap {
-    id: int
-    tap_date: Date
-    tap_time: int
+    +int id
+    +int child_id
+    +int status_id
+    +int user_id
+    +datetime init
+    +datetime end
+    +create_tap()
+    +update_tap()
+    +get_tap_by_child()
 }
 
-%% =================
-%% RELACIONS
-%% =================
-WebService --> UserDAO
-WebService --> ChildDAO
-WebService --> TapDAO
+class Role {
+    +int id
+    +string type_rol
+}
 
-UserDAO --> User
-ChildDAO --> Child
-TapDAO --> Tap
+class Status {
+    +int id
+    +string name
+}
 
-User "1" --> "0..*" Child
-Child "1" --> "0..*" Tap
+class Treatment {
+    +int id
+    +string name
+}
+
+%% DAO Layer
+class UserDAO {
+    +get_user_by_id(id)
+    +get_user_by_username(username)
+    +create_user(user)
+    +update_user(user)
+    +delete_user(id)
+}
+
+class ChildDAO {
+    +get_children_by_user(user_id)
+    +create_child(child)
+    +update_child(child)
+    +delete_child(id)
+}
+
+class TapDAO {
+    +get_tap_by_child(child_id)
+    +create_tap(tap)
+    +update_tap(tap)
+    +delete_tap(id)
+}
+
+%% Relaciones
+User --> Role : has
+User --> Child : manages
+Child --> Treatment : uses
+Tap --> Child : references
+Tap --> User : created_by
+Tap --> Status : has
+
+%% DAO relaciones
+UserDAO --> User : CRUD
+ChildDAO --> Child : CRUD
+TapDAO --> Tap : CRUD

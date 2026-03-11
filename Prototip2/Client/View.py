@@ -55,23 +55,26 @@ class ViewConsole:
         if resposta:
 
             self.loggedUser = resposta
-
             print("\nLogin correcte:", resposta)
 
-            childs = self.daoClient.getChilds(self.loggedUser)
-
-            if childs:
-
-                print("\nChilds del usuari:")
-
-                for c in childs:
-                    print(f"- {c['child_name']} | Sleep average: {c['sleep_average']}")
-
-            else:
-                print("No hi ha childs")
+            self.viewChild()
 
         else:
             print("Error login")
+
+    def viewChild(self):
+
+        childs = self.daoClient.getChilds(self.loggedUser)
+
+        if childs:
+
+            print("\nChilds del usuari:")
+
+            for c in childs:
+                print(f"- {c['child_name']} | Sleep average: {c['sleep_average']}")
+
+        else:
+            print("No hi ha childs")
 
 
 if __name__ == "__main__":

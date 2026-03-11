@@ -39,18 +39,10 @@ def login():
 @app.route('/child', methods=['POST'])
 def getChildren():
 
-    token = request.headers.get("Authorization")
-
-    if not token:
-        return jsonify({
-            "coderesponse": "0",
-            "msg": "Token missing"
-        }), 400
-
     data = request.json
     iduser = data.get("iduser")
 
-    user = User(iduser, "", "", "", 1, token)
+    user = User(iduser, "", "", "", 1, "")
 
     childs = childDao.getChilds(user)
 

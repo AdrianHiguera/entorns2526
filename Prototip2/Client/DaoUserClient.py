@@ -48,12 +48,35 @@ class DaoUserClient:
                 return user
 
         return None
+    
+    def getChilds(self, user):
+
+        URL_peticio = self.base_URL + "/child"
+
+        headers = {
+            "Authorization": user.token
+        }
+
+        params_POST = {
+            "iduser": user.id
+        }
+
+        response = requests.post(URL_peticio, json=params_POST, headers=headers)
+
+        if response.status_code == 200:
+
+            data_raw = response.json()
+
+            if data_raw["coderesponse"] == "1":
+                return data_raw["data"]
+
+        return None
 
 
 # TEST
-daoClient = DaoUserClient()
+'''daoClient = DaoUserClient()
 user = User("", "mare", "12345", "", "", "")
 
 resposta = daoClient.login(user)
 
-print(resposta)
+print(resposta)'''

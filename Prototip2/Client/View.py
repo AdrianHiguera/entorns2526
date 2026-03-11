@@ -1,8 +1,15 @@
+from DaoUserClient import DaoUserClient, User
+
+
 class ViewConsole:
+
+    def __init__(self):
+        self.daoClient = DaoUserClient()
+        self.loggedUser = None
 
     def viewShowMenu(self):
 
-        print("1: Login")
+        print("\n1: Login")
         print("2: Quit")
 
         while True:
@@ -13,7 +20,7 @@ class ViewConsole:
 
                 optionInt = int(option)
 
-                if optionInt >= 1 and optionInt <= 2:
+                if 1 <= optionInt <= 2:
                     return optionInt
 
             print("Error: Introdueix una opció correcta")
@@ -36,10 +43,37 @@ class ViewConsole:
 
     def viewLogin(self):
 
-        print("Enter username or email and password")
+        print("\nEnter username or email and password")
 
         username = input("Username: ")
         password = input("Password: ")
 
-        return username, password
-    
+        user = User("", username, password, "", "", "")
+
+        resposta = self.daoClient.login(user)
+
+        if resposta:
+
+            self.loggedUser = resposta
+
+            print("\nLogin correcte:", resposta)
+
+            childs = self.daoClient.getChilds(self.loggedUser)
+
+            if childs:
+
+                print("\nChilds del usuari:")
+
+                for c in childs:
+                    print(f"- {c['child_name']} | Sleep average: {c['sleep_average']}")
+
+            else:
+                print("No hi ha childs")
+
+        else:
+            print("Error login")
+
+
+if __name__ == "__main__":
+    view = ViewConsole()
+    view.viewGeneral()

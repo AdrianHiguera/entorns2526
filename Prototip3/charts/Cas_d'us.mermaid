@@ -1,31 +1,30 @@
-usecaseDiagram
-actor Tutor
-actor Cuidador
+flowchart LR
 
-rectangle TapatApp {
+Tutor([Tutor])
+Cuidador([Cuidador])
 
-  (Registrarse) 
-  (Iniciar sesión)
-  (Gestionar niño)
-  (Ver niño)
-  (Gestionar tareas)
-  (Asignar tareas)
-  (Ver tareas)
-  (Completar tareas)
+subgraph TapatApp
+  R[Registrarse]
+  L[Iniciar sesión]
+  GN[Gestionar niño]
+  VN[Ver niño]
+  GT[Gestionar tareas]
+  AT[Asignar tareas]
+  VT[Ver tareas]
+  CT[Completar tareas]
+end
 
-}
+Tutor --> R
+Tutor --> L
+Tutor --> GN
+Tutor --> GT
+Tutor --> AT
+Tutor --> VT
 
-Tutor --> (Registrarse)
-Tutor --> (Iniciar sesión)
-Tutor --> (Gestionar niño)
-Tutor --> (Gestionar tareas)
-Tutor --> (Asignar tareas)
-Tutor --> (Ver tareas)
+Cuidador --> L
+Cuidador --> VN
+Cuidador --> VT
+Cuidador --> CT
 
-Cuidador --> (Iniciar sesión)
-Cuidador --> (Ver niño)
-Cuidador --> (Ver tareas)
-Cuidador --> (Completar tareas)
-
-(Gestionar tareas) ..> (Asignar tareas) : <<include>>
-(Ver tareas) ..> (Completar tareas) : <<extend>>
+GT -. incluye .-> AT
+VT -. extiende .-> CT

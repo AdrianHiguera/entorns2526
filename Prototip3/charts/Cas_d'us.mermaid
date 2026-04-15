@@ -1,0 +1,31 @@
+usecaseDiagram
+actor Tutor
+actor Cuidador
+
+rectangle TapatApp {
+
+  (Registrarse) 
+  (Iniciar sesión)
+  (Gestionar niño)
+  (Ver niño)
+  (Gestionar tareas)
+  (Asignar tareas)
+  (Ver tareas)
+  (Completar tareas)
+
+}
+
+Tutor --> (Registrarse)
+Tutor --> (Iniciar sesión)
+Tutor --> (Gestionar niño)
+Tutor --> (Gestionar tareas)
+Tutor --> (Asignar tareas)
+Tutor --> (Ver tareas)
+
+Cuidador --> (Iniciar sesión)
+Cuidador --> (Ver niño)
+Cuidador --> (Ver tareas)
+Cuidador --> (Completar tareas)
+
+(Gestionar tareas) ..> (Asignar tareas) : <<include>>
+(Ver tareas) ..> (Completar tareas) : <<extend>>

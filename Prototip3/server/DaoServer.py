@@ -26,6 +26,19 @@ class UserDAO:
             password="root",
             database="tapatapp"
         )
+    
+    def getUserByToken(self, token):
+        con= self.connectBBDD()
+        cursor = con.cursor(dictionary=True)
+        query = """
+            SELECT * FROM User
+            WHERE token = %s
+        """
+        cursor.execute(query, (token,))
+        user = cursor.fetchone()
+        cursor.close()
+        con.close()
+        return user
 
     def login(self, identifier, password):
         con = self.connectBBDD()
@@ -76,58 +89,13 @@ class UserDAO:
     def getHash2(self):
         milliseconds = str(time() * random.randrange(10000))
         return hashlib.sha256(milliseconds.encode('utf-8')).hexdigest()
+    
+class ChildDAO:
+
+    def getChilds(self, username):
+        return "TODO getChilds for " + username
 
 
-# =======================
-# RESPONSE
-# =======================
-
-@dataclass
-class ApiResponse:
-    msg: str
-    coderesponse: str
-    data: any
-
-
-# =======================
-# DAO INSTANCE
-# =======================
-
-userDao = UserDAO()
-
-
-# =======================
-# ROUTES
-# =======================
-
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-
-    identifier = data.get('username')  # username o email
-    password = data.get('password')
-
-    user = userDao.login(identifier, password)
-
-    if user:
-        response = ApiResponse(
-            msg="Authenticated",
-            coderesponse="1",
-            data=user
-        )
-    else:
-        response = ApiResponse(
-            msg="Not authenticated",
-            coderesponse="0",
-            data=""
-        )
-
-    return jsonify(asdict(response)), 200
-
-
-# =======================
-# MAIN
-# =======================
-
-if __name__ == '__main__':
-    app.run(debug=True)
+dao = UserDAO()
+u = dao.getUserByToken("fa7cc6e2d8d3a5e178888eba42de2f5640fbc39816e741be73467b264382998a")
+print(u)

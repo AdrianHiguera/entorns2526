@@ -1,101 +1,112 @@
 from dataclasses import dataclass, asdict
-import hashlib
-from flask import Flask, jsonify, request
+from flask import jsonify
 import mysql.connector
+import hashlib
 from time import time
 import random
-from werkzeug.security import generate_password_hash, check_password_hash
 
-# =======================
-# CONFIG FLASK
-# =======================
-
-app = Flask(__name__)
-
-# =======================
-# DAO
-# =======================
 
 class UserDAO:
-    
+
     def connectBBDD(self):
-        return mysql.connector.connect(
+        connection = mysql.connector.connect(
             host="localhost",
-            port=3306,
             user="root",
             password="root",
             database="tapatapp"
         )
-    
-    def getUserByToken(self, token):
-        con= self.connectBBDD()
+        return connection
+     
+    def getUserByToken(self,token):
+        # connexió a BBDD
+        con=self.connectBBDD()
         cursor = con.cursor(dictionary=True)
-        query = """
-            SELECT * FROM User
-            WHERE token = %s
-        """
-        cursor.execute(query, (token,))
+        query = "SELECT * FROM User WHERE token = '" + token + "'"
+        cursor.execute(query)
         user = cursor.fetchone()
         cursor.close()
         con.close()
         return user
+
 
     def login(self, identifier, password):
-        con = self.connectBBDD()
+        # connexió a BBDD
+        con=self.connectBBDD()
         cursor = con.cursor(dictionary=True)
-
         query = """
             SELECT * FROM User
-            WHERE (username = %s OR email = %s)
+            WHERE (username = %s OR email = %s) AND password = %s
         """
-
-        cursor.execute(query, (identifier, identifier))
+        cursor.execute(query, (identifier, identifier, password))
         user = cursor.fetchone()
-
-        if user and check_password_hash(user['password'], password):
-            print("LOGIN OK")
-            token = self.setTokenUser(user['username'])
-            user['token'] = token
-        else:
-            print("LOGIN FAIL")
-            user = None
-
+        token=""
+        if user:
+            token=self.setTokenUser(user['username'])
+            #print(user)
+            user['token']=token
         cursor.close()
         con.close()
-
         return user
-
+    
     def setTokenUser(self, username):
-        con = self.connectBBDD()
-        cursor = con.cursor()
-
-        token = self.getHash(username)
-
-        query = "UPDATE User SET token = %s WHERE username = %s"
-        
-        cursor.execute(query, (token, username))
+        # connectar BBDD
+        con=self.connectBBDD()
+        cursor = con.cursor(dictionary=True)
+        # generar Token
+        token=self.getHash() #token=self.getHash(username)
+        # Update a BBDD camp Token al usuari per username
+        print(type(token))
+        query = "UPDATE User SET token ='" + token + "' WHERE username = '" + username +"'"
+        # print(query)
+        cursor.execute(query)
         con.commit()
-
+        # Close BBDD
         cursor.close()
         con.close()
-
         return token
-
-    def getHash(self, username):
-        milliseconds = str(time() * 1000)
-        data = username + milliseconds
-        return hashlib.sha256(data.encode('utf-8')).hexdigest()
-
-    def getHash2(self):
-        milliseconds = str(time() * random.randrange(10000))
-        return hashlib.sha256(milliseconds.encode('utf-8')).hexdigest()
     
+    def getHash(self):
+        milliseconds = str(time() * random.randrange(10000))
+        data=  milliseconds
+        hash_object = hashlib.sha256(data.encode('utf-8'))
+        return hash_object.hexdigest() + ""
+    
+    def getHash2(self,username):
+        milliseconds = str(time() * 1000)
+        data=username + milliseconds
+        hash_object =  hashlib.sha256(data.encode('utf-8'))
+        return hash_object.hexdigest() + ""
+
+
 class ChildDAO:
 
-    def getChilds(self, username):
-        return "TODO getChilds for " + username
+    def connectBBDD(self):
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="tapatapp"
+        )
+        return connection
 
-
-dao = UserDAO()
-u = dao.getUserByToken("fa7cc6e2d8d3a5e178888eba42de2f5640fbc39816e741be73467b264382998a")
+    def getChilds(self,id_user):
+        con=self.connectBBDD()
+        cursor = con.cursor(dictionary=True)
+        query = "SELECT distinct  Child.* FROM RelationUserChild,Child WHERE RelationUserChild.user_id='"
+        query += id_user + "' and RelationUserChild.child_id=Child.id"""
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        con.close()
+        return  results
+   
+'''
+cdao=ChildDAO()
+res=cdao.getChilds("1")
+print(res)
+dao=UserDAO()
+u=dao.getUserByToken("5b8656c4f2dc8461550dc44543e4fdb23a481c1d76fcf2e1353fe5425f50ee40")
 print(u)
+u=dao.getUserByToken("123455")
+print(u)
+'''
